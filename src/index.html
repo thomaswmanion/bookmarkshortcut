@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <title>Bookmark Shortcut</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 20vh;
+            min-height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const shortcut = urlParams.get('s')
+        console.log(shortcut);
+        if (shortcut) {
+            const script = atob(decodeURIComponent(shortcut));
+            console.log(script);
+            eval(script);
+        } else {
+            const s = (name, innerText) => {
+                const el = document.createElement(name);
+                el.innerHTML = innerText;
+                return el;
+            };
+            const defaultJavaScript = `
+result = prompt('Search Text', '');
+window.location = 'https://www.google.com/search?q=' + encodeURIComponent(result);`.trim();
+            const headerEl = s('h1', 'bookmarkshortcut.com');
+            const descriptionEl = s('p', 'Write some JavaScript below!');
+            const shortcutAreaEl = s('textarea', defaultJavaScript);
+            shortcutAreaEl.rows = '5';
+            const shortcutBtnEl = s('button', 'Create Shortcut!');
+
+            const shortcutLink = s('a', '');
+            [
+                headerEl,
+                descriptionEl,
+                shortcutAreaEl,
+                shortcutBtnEl,
+                s('br'), s('br'),
+                shortcutLink
+            ].forEach(el => document.body.appendChild(el));
+
+            shortcutBtnEl.addEventListener('click', () => {
+                console.log(shortcutAreaEl.value);
+                const encoded = encodeURIComponent(btoa(shortcutAreaEl.value));
+                const url = location.protocol + '//' + location.host + '/?s=' + encoded;
+
+                shortcutLink.innerText = url;
+                shortcutLink.href = url;
+            });
+        }
+
+    </script>
+</body>
+
+</html>
